@@ -3,8 +3,10 @@
 namespace Webfox\Xero;
 
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use Illuminate\Http\Request;
 
-interface OauthCredentialManager {
+interface OauthCredentialManager
+{
 
     /**
      * Get the current access token
@@ -23,13 +25,13 @@ interface OauthCredentialManager {
 
     /**
      * Get all tenants available
-    **/
+     **/
     public function getTenants(): ?array;
 
     /**
      * Get the current tenant ID
      */
-    public function getTenantId(int $tenant =0): string;
+    public function getTenantId(int $tenant = 0): string;
 
     /**
      * Get the time the current access token expires (unix timestamp)
@@ -97,4 +99,19 @@ interface OauthCredentialManager {
      */
     public function getData(): array;
 
+    /**
+     * Store the details of the access token
+     *
+     * Should store array [
+     *   'token'         => $token->getToken(),
+     *   'refresh_token' => $token->getRefreshToken(),
+     *   'id_token'      => $token->getValues()['id_token'],
+     *   'expires'       => $token->getExpires(),
+     *   'tenants'       => $tenants ?? $this->getTenants(),
+     * ]
+     *
+     * @param AccessTokenInterface $token
+     * @param Array|null          $tenants
+     */
+    public function addRequiredValuesInSessions(Request $request, AccessTokenInterface $token, array $tenants = null): void;
 }
